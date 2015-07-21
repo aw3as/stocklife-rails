@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   end
 
   def welcome
+    puts 'HELLO WORLD FROM CONSOLE'
     render :text => 'Hello World'
   end
 
