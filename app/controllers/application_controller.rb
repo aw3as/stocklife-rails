@@ -16,13 +16,13 @@ class ApplicationController < ActionController::Base
         unless other_participant
           Bot.message("Your recipient has not registered for $tocklife!")
         else
-          amount = params[:message].split(' ')[-1].count('+')
+          amount = 0
+          amount = amount + params[:message].split(' ')[-1].count('+')
+          amount = amount - params[:message].split(' ')[-1].count('-')
           participant.transact(other_participant, amount)
         end
       end
     else
-      puts 'MESSAGE'
-      puts params[:message]
       case params[:message]
       when 'register'
         if Participant.find_by(:user_id => params[:user_id], :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
@@ -39,6 +39,14 @@ class ApplicationController < ActionController::Base
         else
           Bot.message("You have not registered for $tocklife! Type '@register' to register")
         end
+      when 'leaderboard'
+        pool = Pool.find_by(:group_id => params[:group_id])
+        participants = pool.participants.sort_by(:total).reverse
+        message = ''
+        participants.each_with_index do |participant, index|
+          message += "#{index + 1}. #{participant.user.name}: #{participant.total}\n"
+        end
+        Bot.message(message)
       end
     end
     
