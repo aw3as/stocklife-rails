@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
     puts params
   end
 
+  def welcome
+    render :text => 'Hello World'
+  end
+
   private
 
   def verify_symbol
