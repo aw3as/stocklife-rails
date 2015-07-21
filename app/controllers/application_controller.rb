@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
               User.register(pool, user)
             end
           else
-            user = User.create(:user_id => params[:user_id])
+            user = User.create(:user_id => params[:user_id], :name => params[:name])
             User.register(pool, user)
           end
         else
@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
           if user
               User.register(pool, user)
           else
-            user = User.create(:user_id => params[:user_id])
+            user = User.create(:user_id => params[:user_id], :name => params[:name])
             User.register(pool, user)
           end
         end
