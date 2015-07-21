@@ -14,24 +14,31 @@
 ActiveRecord::Schema.define(version: 20150721192338) do
 
   create_table "participants", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "pool_id",    limit: 4, null: false
+    t.integer  "user_id",    limit: 4, null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
   end
 
   create_table "pools", force: :cascade do |t|
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
-    t.integer  "group_id",   limit: 4
+    t.integer  "group_id",   limit: 4, null: false
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.integer  "sender_id",   limit: 4, null: false
+    t.integer  "receiver_id", limit: 4, null: false
+    t.integer  "amount",      limit: 4, null: false
   end
 
   create_table "users", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "user_id",    limit: 4,   null: false
+    t.string   "name",       limit: 255
   end
 
 end

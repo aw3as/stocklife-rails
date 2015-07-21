@@ -7,28 +7,44 @@ class ApplicationController < ActionController::Base
   before_action :verify_symbol
 
   def receive
-    if params[:message] = 'register'
-      pool = Pool.find_by(:group_id => params[:group_id])
-      unless pool
-        pool = Pool.create(:group_id => params[:group_id])
+    if params[:type] and params[:type] == 'mentions'
+      participant = Participant.find_by(:user_id => params[:user_id], :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
+      unless participant
+        Bot.message("You have not registered for $tocklife! Type '@register' to register")
+      else
+        other_participant = Participant.find_by(:user_id => params[:user_ids].first, :pool_id => participant.pool.id)
+        unless other_participant
+          Bot.message("Your recipient has not registered for $tocklife!")
+        else
+          amount = params[:message].split(' ')[-1].count('+')
+          participant.transact(other_participant, amount)
+        end
       end
-      user = User.find_by(:user_id => params[:user_id])
-      unless user
-        user = User.create(:user_id => params[:user_id], :name => params[:name])
+    else
+      case params[:message]
+      when 'register'
+        if Participant.find_by(:user_id => params[:user_id], :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
+          Bot.message("#{params[:name]} has already registered!")
+        else
+          User.register(params[:group_id], params[:user_id], params[:name])
+        end
+      when 'help'
+        Bot.help
+      when 'total'
+        participant = Participant.find_by(:user_id => params[:user_id], :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
+        if participant
+          Bot.message("#{participant.user.name} has #{participant.total} points!")
+        else
+          Bot.message("You have not registered for $tocklife! Type '@register' to register")
+        end
       end
-      participant = Participant.create(:user_id => user.id, :pool_id => pool.id)
     end
-    message("#{user.name} has succesfully registered!")
+    
     render :nothing => true
   end
 
   def welcome
     render :text => 'Hello World'
-  end
-
-  def message(message)
-    id = 'fab0cad741b6d1a7f1b02e19e8'
-    Curl.post("https://api.groupme.com/v3/bots/post?bot_id=#{id}&text=#{CGI.escape(message)}")
   end
 
   private
