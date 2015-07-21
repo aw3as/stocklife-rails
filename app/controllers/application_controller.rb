@@ -7,12 +7,12 @@ class ApplicationController < ActionController::Base
   before_action :verify_symbol
 
   def receive
-    if params[:attachment] and params[:attachments][:mentions] == 'mentions'
+    if params[:attachments]
       participant = Participant.find_by(:user_id => User.find_by(:user_id => params[:user_id]).id, :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
       unless participant
         Bot.message("You have not registered for $tocklife! Type '@register' to register")
       else
-        other_participant = Participant.find_by(:user_id => params[:attachments][:user_ids].first, :pool_id => participant.pool.id)
+        other_participant = Participant.find_by(:user_id => User.find_by(:user_id => params[:attachments].first[:user_ids].first).id, :pool_id => participant.pool.id)
         unless other_participant
           Bot.message("Your recipient has not registered for $tocklife!")
         else
