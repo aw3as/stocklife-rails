@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
 
   def register
     puts params
+    puts "HELLO TEST"
   end
 
   def welcome
