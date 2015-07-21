@@ -21,6 +21,8 @@ class ApplicationController < ActionController::Base
         end
       end
     else
+      puts 'MESSAGE'
+      puts params[:message]
       case params[:message]
       when 'register'
         if Participant.find_by(:user_id => params[:user_id], :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
