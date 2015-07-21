@@ -7,20 +7,21 @@ class ApplicationController < ActionController::Base
   before_action :verify_symbol
 
   def register
-    puts params
-    puts "HELLO TEST"
-    render :nothing
+    puts params[:text]
+    puts "MESSAGE"
+    render :nothing => true
   end
 
   def welcome
-    puts 'HELLO WORLD FROM CONSOLE'
     render :text => 'Hello World'
   end
 
   private
 
   def verify_symbol
-    puts params
+    if params[:text][0] != '!'
+      render :nothing => true and return
+    end
   end
 
 
