@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
       when 'help'
         Bot.help
       when 'total'
-        participant = Participant.find_by(:user_id => params[:user_id], :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
+        participant = Participant.find_by(:user_id => User.find_by(:user_id => params[:user_id]).id, :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
         if participant
           Bot.message("#{participant.user.name} has #{participant.total} points!")
         else
