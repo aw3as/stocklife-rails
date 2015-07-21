@@ -8,45 +8,93 @@ class ApplicationController < ActionController::Base
 
   def receive
     if params[:attachments]
-      participant = Participant.find_by(:user_id => User.find_by(:user_id => params[:user_id]).id, :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
-      unless participant
-        Bot.message("You have not registered for $tocklife! Type '@register' to register")
-      else
-        other_participant = Participant.find_by(:user_id => User.find_by(:user_id => params[:attachments].first[:user_ids].first).id, :pool_id => participant.pool.id)
-        unless other_participant
-          Bot.message("Your recipient has not registered for $tocklife!")
+      pool = Pool.find_by(:group_id => params[:group_id])
+      if pool
+        user = User.find_by(:user_id => params[:user_id])
+        if user
+          participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
+          if participant
+            other_user = User.find_by(:user_id => params[:attachments].first[:user_ids].first)
+            if other_user
+              other_participant = Participant.find_by(:user_id => other_user.id, :pool_id => pool.id)
+              if other_participant
+                amount = 0
+                amount = amount + params[:message].split(' ')[-1].count('+')
+                amount = amount - params[:message].split(' ')[-1].count('-')
+                participant.transact(other_participant, amount)
+              else
+                Bot.message('Your recipient has not registered for $tocklife!')
+              end
+            else
+              Bot.message('Your recipient has not registered in this pool!')
+            end
+          else
+            Bot.message('You have not been registered in this pool!')
+          end
         else
-          amount = 0
-          amount = amount + params[:message].split(' ')[-1].count('+')
-          amount = amount - params[:message].split(' ')[-1].count('-')
-          participant.transact(other_participant, amount)
+          Bot.message('You have not been registered for $tocklife!')
         end
+      else
+        Bot.message("$tocklife has not been started for this pool - @register to start one!")
       end
     else
       case params[:message]
       when 'register'
-        if Participant.find_by(:user_id => params[:user_id], :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
-          Bot.message("#{params[:name]} has already registered!")
+        pool = Pool.find_by(:group_id => params[:group_id])
+        if pool
+          user = User.find_by(:user_id => params[:user_id])
+          if user
+            if Participant.find_by(:user_id => user.id, :pool_id => pool.id)
+              Bot.message("#{params[:name]} has already registered!")
+            else
+              User.register(pool, user)
+            end
+          else
+            user = User.create(:user_id => params[:user_id])
+            User.register(pool, user)
+          end
         else
-          User.register(params[:group_id], params[:user_id], params[:name])
+          pool = Pool.create(:group_id => params[:group_id])
+          Bot.message("Initializing pool for the first time...")
+          user = User.find_by(:user_id => params[:user_id])
+          if user
+              User.register(pool, user)
+          else
+            user = User.create(:user_id => params[:user_id])
+            User.register(pool, user)
+          end
         end
       when 'help'
         Bot.help
       when 'total'
-        participant = Participant.find_by(:user_id => User.find_by(:user_id => params[:user_id]).id, :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
-        if participant
-          Bot.message("#{participant.user.name} has #{participant.total} points!")
+        pool = Pool.find_by(:group_id => params[:group_id])
+        if pool
+          user = User.find_by(:user_id => params[:user_id])
+          if user
+            participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
+            if participant
+              Bot.message("#{participant.user.name} has #{participant.total} points!")
+            else
+              Bot.message("You have not registered for $tocklife in this pool! Type '@register' to register")
+            end
+          else
+            Bot.message("You have not registered for $tocklife! Type '@register' to register")
+          end
         else
-          Bot.message("You have not registered for $tocklife! Type '@register' to register")
+          Bot.message("$tocklife has not been started for this pool - @register to start one!")
         end
       when 'leaderboard'
         pool = Pool.find_by(:group_id => params[:group_id])
-        participants = pool.participants.sort_by(:total).reverse
-        message = ''
-        participants.each_with_index do |participant, index|
-          message += "#{index + 1}. #{participant.user.name}: #{participant.total}\n"
+        if pool
+          participants = pool.participants.sort_by(:total).reverse
+          message = ''
+          participants.each_with_index do |participant, index|
+            message += "#{index + 1}. #{participant.user.name}: #{participant.total}\n"
+          end
+          Bot.message(message)
+        else
+          Bot.message("$tocklife has not been started for this pool - @register to start one!")
         end
-        Bot.message(message)
       end
     end
     
