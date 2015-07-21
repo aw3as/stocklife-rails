@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   def receive
     if params[:attachment] and params[:attachments][:mentions] == 'mentions'
-      participant = Participant.find_by(:user_id => params[:user_id], :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
+      participant = Participant.find_by(:user_id => User.find_by(:user_id => params[:user_id]).id, :pool_id => Pool.find_by(:group_id => params[:group_id]).id)
       unless participant
         Bot.message("You have not registered for $tocklife! Type '@register' to register")
       else
