@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
 
   def self.register(pool, user)
     participant = Participant.create(:user_id => user.id, :pool_id => pool.id)
-    Bot.message("#{user.name} has successfully registered!")
+    Bot.message(pool, "#{user.name} has successfully registered!")
   end
 
 end
