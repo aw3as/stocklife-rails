@@ -8,7 +8,7 @@ class Participant < ActiveRecord::Base
 
   def transact(participant, amount)
     sent_transactions.create(:receiver_id => participant.id, :amount => amount)
-    Bot.message("#{user.name} has given #{participant.user.name} #{amount} points")
+    Bot.message(participant.pool, "#{user.name} has given #{participant.user.name} #{amount} points")
   end
 
   def total
