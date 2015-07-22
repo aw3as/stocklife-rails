@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
       when 'leaderboard'
         pool = Pool.find_by(:group_id => params[:group_id])
         if pool
-          participants = pool.participants.sort_by(:total).reverse
+          participants = pool.participants.sort_by(&:total).reverse
           message = ''
           participants.each_with_index do |participant, index|
             message += "#{index + 1}. #{participant.user.name}: #{participant.total}\n"
