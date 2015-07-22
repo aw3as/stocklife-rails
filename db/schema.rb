@@ -21,10 +21,10 @@ ActiveRecord::Schema.define(version: 20150721192338) do
   end
 
   create_table "pools", force: :cascade do |t|
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.integer  "group_id",   limit: 4, null: false
-    t.integer  "bot_id",     limit: 4, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "group_id",   limit: 4,   null: false
+    t.string   "bot_id",     limit: 255, null: false
   end
 
   create_table "transactions", force: :cascade do |t|
