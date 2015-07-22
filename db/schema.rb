@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20150721192338) do
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
     t.integer  "group_id",   limit: 4, null: false
+    t.integer  "bot_id",     limit: 4, null: false
   end
 
   create_table "transactions", force: :cascade do |t|
