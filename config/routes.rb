@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  post 'receive' => 'application#receive'
+  post '' => 'application#receive'
 
   post 'register' => 'application#register'
 
