@@ -1,0 +1,24 @@
+#modal.modal.fade
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close aria-label="Close" data-dismiss="modal" type="button" 
+          span aria-hidden="true"  &times;
+        h4.modal-title Welcome to $tocklife!
+      .modal-body
+        form
+          #group-group.form-group
+            label.control-label Group ID
+            .input-group
+              input#group.form-control placeholder="ex. 15080799"
+              span.input-group-addon ID
+            span.help-block Each $tocklife pool is associated with your Group ID
+          #bot-group.form-group
+            label.control-label Bot ID
+            .input-group
+              input#bot.form-control placeholder="26 characters long, ex. 993dda9599bb57f3269fbf756d"
+              span.input-group-addon ID
+            span.help-block The Bot ID helps $tocklife know where to post messages to!
+      .modal-footer
+        button#reset.btn.btn-danger.pull-left type="button" Reset
+        button#register.btn.btn-info type="button" Register!

@@ -2,7 +2,9 @@ Rails.application.routes.draw do
 
   post 'receive' => 'application#receive'
 
-  root 'application#welcome'
+  post 'register' => 'application#register'
+
+  root 'application#pool'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

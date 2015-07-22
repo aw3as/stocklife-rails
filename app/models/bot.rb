@@ -1,11 +1,15 @@
 class Bot
 
-  def self.message(message)
-    Curl.post("https://api.groupme.com/v3/bots/post?bot_id=fab0cad741b6d1a7f1b02e19e8&text=#{CGI.escape(message)}")
+  def self.message(pool, message)
+    Curl.post("https://api.groupme.com/v3/bots/post?bot_id=#{pool.bot_id}&text=#{CGI.escape(message)}")
   end
 
-  def self.help
-    Bot.message('Welcome to $tocklife! @ prepends all commands, like @total, @register, @help')
+  def self.help(pool)
+    Bot.message(pool, 'Welcome to $tocklife! @ prepends all commands, like @total, @register, @help, @leaderboard')
+  end
+
+  def self.command(pool)
+    Bot.message(pool, 'Available commands: @total, @register, @help, @leaderboard, @[name] ++, @[name] ---, etc.')
   end
 
 end
