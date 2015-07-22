@@ -40,7 +40,7 @@ class ApplicationController < ActionController::Base
         user = User.find_by(:user_id => params[:user_id])
         if user
           if Participant.find_by(:user_id => user.id, :pool_id => pool.id)
-            Bot.message("#{params[:name]} has already registered!")
+            Bot.message(pool, "#{params[:name]} has already registered!")
           else
             User.register(pool, user)
           end
