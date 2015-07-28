@@ -17,20 +17,20 @@ class Participant < ActiveRecord::Base
       elsif pluses + amount > 10
         amount = 10 - pluses
         sent_transactions.create(:receiver_id => participant.id, :amount => amount)
-        Bot.message(participant.pool, "#{user.name} - after adding $#{amount} you've reached your daily limit of 10 pluses!")
+        Bot.message(participant.pool, "After adding $#{amount} you've reached your daily limit of 10 pluses!")
       else
         sent_transactions.create(:receiver_id => participant.id, :amount => amount)
       end
     elsif amount < 0
       minuses = recent_transactions.map(&:amount).select do |value|
         value < 0
-      end.sum
+      end.sum.abs
       if minuses == 5
         Bot.message(participant.pool, "You have reached your daily limit of 5 minuses!")
-      elsif minuses + amount > 5
-        amount = 5 - minuses
-        sent_transactions.create(:receiver_id => participant.id, :amount => amount)
-        Bot.message(participant.pool, "#{user.name} - after subtracting $#{amount} you've reached your daily limit of 5 minuses!")
+      elsif minuses + amount.abs > 5
+        amount = 5 - minuses.abs
+        sent_transactions.create(:receiver_id => participant.id, :amount => amount * -1)
+        Bot.message(participant.pool, "After subtracting $#{amount} you've reached your daily limit of 5 minuses!")
       else
         sent_transactions.create(:receiver_id => participant.id, :amount => amount)
       end
