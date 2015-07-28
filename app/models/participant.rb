@@ -37,7 +37,7 @@ class Participant < ActiveRecord::Base
         if new_amount == 5 - minuses
           Bot.message(participant.pool, "After subtracting $#{new_amount} you've reached your daily limit of 5 minuses!")
         else
-          Bot.message(participant.pool, "After subtracting $#{new_amount} #{participant.user.name}'s share price is at $#{participant.total}!")
+          Bot.message(participant.pool, "After subtracting $#{new_amount} #{participant.user.name}'s share price is at $#{participant.reload.total}!")
         end
       else
         sent_transactions.create(:receiver_id => participant.id, :amount => amount)
