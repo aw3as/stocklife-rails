@@ -25,8 +25,12 @@ class Participant < ActiveRecord::Base
       minuses = recent_transactions.map(&:amount).select do |value|
         value < 0
       end.sum.abs
-      if minuses == 5
-        Bot.message(participant.pool, "You have reached your daily limit of 5 minuses!")
+      if minuses == 5 or participant.total == 0
+        if minuses == 5
+          Bot.message(participant.pool, "You have reached your daily limit of 5 minuses!")
+        else
+          Bot.message(participant.pool, "#{participant.user.name}'s share price is already at $0!")
+        end
       elsif minuses + amount.abs > 5 or participant.total - amount.abs < 0
         new_amount = [5 - minuses.abs, participant.total - amount.abs].min
         sent_transactions.create(:receiver_id => participant.id, :amount => new_amount * -1)
