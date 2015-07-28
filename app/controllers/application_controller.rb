@@ -67,7 +67,7 @@ class ApplicationController < ActionController::Base
         participants = pool.participants.sort_by(&:total).reverse
         message = ''
         participants.each_with_index do |participant, index|
-          message += "#{index + 1}. $#{participant.user.name}: #{participant.total}\n"
+          message += "#{index + 1}. #{participant.user.name}: $#{participant.total}\n"
         end
         Bot.message(pool, message)
       when 'admin'
