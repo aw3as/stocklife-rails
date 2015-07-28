@@ -7,8 +7,8 @@ class ApplicationController < ActionController::Base
   before_action :verify_symbol, :except => [:pool, :register]
 
   def receive
+    pool = Pool.find_by(:group_id => params[:group_id])
     if params[:attachments]
-      pool = Pool.find_by(:group_id => params[:group_id])
       user = User.find_by(:user_id => params[:user_id])
       if user
         participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
@@ -36,7 +36,6 @@ class ApplicationController < ActionController::Base
     else
       case params[:message]
       when 'register'
-        pool = Pool.find_by(:group_id => params[:group_id])
         user = User.find_by(:user_id => params[:user_id])
         if user
           if Participant.find_by(:user_id => user.id, :pool_id => pool.id)
@@ -49,13 +48,10 @@ class ApplicationController < ActionController::Base
           User.register(pool, user)
         end
       when 'help'
-        pool = Pool.find_by(:group_id => params[:group_id])
         Bot.help(pool)
       when 'commands'
-        pool = Pool.find_by(:group_id => params[:group_id])
         Bot.command(pool)
       when 'total'
-        pool = Pool.find_by(:group_id => params[:group_id])
         user = User.find_by(:user_id => params[:user_id])
         if user
           participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
@@ -68,17 +64,24 @@ class ApplicationController < ActionController::Base
           Bot.message(pool, "You have not registered for $tocklife! Type '@register' to register")
         end
       when 'leaderboard'
-        pool = Pool.find_by(:group_id => params[:group_id])
-        if pool
-          participants = pool.participants.sort_by(&:total).reverse
-          message = ''
-          participants.each_with_index do |participant, index|
-            message += "#{index + 1}. #{participant.user.name}: #{participant.total}\n"
-          end
-          Bot.message(pool, message)
-        else
-          Bot.message(pool, "$tocklife has not been started for this pool - @register to start one!")
+        participants = pool.participants.sort_by(&:total).reverse
+        message = ''
+        participants.each_with_index do |participant, index|
+          message += "#{index + 1}. #{participant.user.name}: #{participant.total}\n"
         end
+        Bot.message(pool, message)
+      when 'admin'
+        Bot.message(pool, "#{pool.admin.user.name} is the admin!")
+      when 'reset'
+        user = User.find_by(:user_id => params[:user_id])
+        if pool.admin.user == user
+          pool.wipe
+          Bot.message(pool, "The pool has been reset!")
+        else
+          Bot.message(pool, "You're not the admin!")
+        end
+      when 'status'
+        Bot.status(pool)
       end
     end
     
