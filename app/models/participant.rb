@@ -46,7 +46,7 @@ class Participant < ActiveRecord::Base
   end
 
   def total
-    received_transactions.map(&:amount).sum + 2
+    received_transactions.map(&:amount).sum + 100
   end
 
 end
