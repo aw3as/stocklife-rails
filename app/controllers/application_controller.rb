@@ -82,7 +82,6 @@ class ApplicationController < ActionController::Base
         else
           Bot.message(pool, 'You have not been registered for $tocklife!')
         end
-      end
       when 'reset'
         user = User.find_by(:user_id => params[:user_id])
         if pool.admin.user == user
