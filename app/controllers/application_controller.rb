@@ -9,29 +9,33 @@ class ApplicationController < ActionController::Base
   def receive
     pool = Pool.find_by(:group_id => params[:group_id])
     if params[:attachments]
-      user = User.find_by(:user_id => params[:user_id])
-      if user
-        participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
-        if participant
-          other_user = User.find_by(:user_id => params[:attachments].first[:user_ids].first)
-          if other_user
-            other_participant = Participant.find_by(:user_id => other_user.id, :pool_id => pool.id)
-            if other_participant
-              amount = 0
-              amount = amount + params[:message].gsub(other_participant.user.name, '').count('+')
-              amount = amount - params[:message].gsub(other_participant.user.name, '').count('-')
-              participant.transact(other_participant, amount)
+      if pool.started
+        user = User.find_by(:user_id => params[:user_id])
+        if user
+          participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
+          if participant
+            other_user = User.find_by(:user_id => params[:attachments].first[:user_ids].first)
+            if other_user
+              other_participant = Participant.find_by(:user_id => other_user.id, :pool_id => pool.id)
+              if other_participant
+                amount = 0
+                amount = amount + params[:message].gsub(other_participant.user.name, '').count('+')
+                amount = amount - params[:message].gsub(other_participant.user.name, '').count('-')
+                participant.transact(other_participant, amount)
+              else
+                Bot.message(pool, 'Your recipient has not registered for $tocklife!')
+              end
             else
-              Bot.message(pool, 'Your recipient has not registered for $tocklife!')
+              Bot.message(pool, 'Your recipient has not registered in this pool!')
             end
           else
-            Bot.message(pool, 'Your recipient has not registered in this pool!')
+            Bot.message(pool, 'You have not been registered in this pool!')
           end
         else
-          Bot.message(pool, 'You have not been registered in this pool!')
+          Bot.message(pool, 'You have not been registered for $tocklife!')
         end
       else
-        Bot.message(pool, 'You have not been registered for $tocklife!')
+        Bot.message(pool, "The pool has not been started yet! Message #{pool.admin.user.name} to start the pool!")
       end
     else
       case params[:message]
@@ -51,23 +55,13 @@ class ApplicationController < ActionController::Base
         Bot.help(pool)
       when 'commands'
         Bot.command(pool)
-      when 'total'
-        user = User.find_by(:user_id => params[:user_id])
-        if user
-          participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
-          if participant
-            Bot.message(pool, "#{participant.user.name} has #{participant.total} points!")
-          else
-            Bot.message(pool, "You have not registered for $tocklife in this pool! Type '@register' to register")
-          end
-        else
-          Bot.message(pool, "You have not registered for $tocklife! Type '@register' to register")
-        end
+      when 'prices'
+        Bot.message(pool, pool.prices)
       when 'leaderboard'
-        participants = pool.participants.sort_by(&:total).reverse
+        participants = pool.participants.sort_by(&:price).reverse
         message = ''
         participants.each_with_index do |participant, index|
-          message += "#{index + 1}. #{participant.user.name}: $#{participant.total}\n"
+          message += "#{index + 1}. #{participant.user.name}: $#{participant.price}\n"
         end
         Bot.message(pool, message)
       when 'admin'
@@ -89,7 +83,7 @@ class ApplicationController < ActionController::Base
   end
 
   def register
-    pool = Pool.create(:group_id => params[:group_id], :bot_id => params[:bot_id])
+    pool = Pool.create(:group_id => params[:group_id], :bot_id => params[:bot_id], :start_cash => params[:start_cash], :minimum_person => params[:minimum_person], :start_price => params[:start_price])
     Bot.message(pool, "$tocklife has been initialized for this pool! Type @help for commands, and @register to begin playing!")
     render :json => {:success => true}
   end

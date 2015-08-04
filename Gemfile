@@ -33,3 +33,6 @@ gem 'curb'
 
 # Use thin as the app server
 gem 'thin'
+
+# Use money gem to deal with formatting currency
+gem 'money'

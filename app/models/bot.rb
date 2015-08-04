@@ -9,7 +9,7 @@ class Bot
   end
 
   def self.command(pool)
-    Bot.message(pool, 'Available commands: @total, @register, @help, @leaderboard, @status, @reset, @admin, @[name] ++, @[name] ---, etc.')
+    Bot.message(pool, 'Available commands: @price, @register, @help, @leaderboard, @status, @reset, @admin, @[name] ++, @[name] ---, etc.')
   end
 
   def self.status(pool)

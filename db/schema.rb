@@ -21,10 +21,22 @@ ActiveRecord::Schema.define(version: 20150721192338) do
   end
 
   create_table "pools", force: :cascade do |t|
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.integer  "group_id",   limit: 4,   null: false
-    t.string   "bot_id",     limit: 255, null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.integer  "group_id",       limit: 4,                    null: false
+    t.string   "bot_id",         limit: 255,                  null: false
+    t.integer  "start_price",    limit: 4,   default: 100,    null: false
+    t.integer  "start_cash",     limit: 4,   default: 100000, null: false
+    t.boolean  "started",        limit: 1,   default: false,  null: false
+    t.integer  "minimum_person", limit: 4,   default: 7,      null: false
+  end
+
+  create_table "stocks", force: :cascade do |t|
+    t.integer  "owner_id",       limit: 4,             null: false
+    t.integer  "participant_id", limit: 4
+    t.integer  "amount",         limit: 4, default: 0, null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
   create_table "transactions", force: :cascade do |t|
