@@ -106,8 +106,13 @@ class ApplicationController < ActionController::Base
   private
 
   def verify_symbol
-    if params[:text][0] != '@' or params[:sender_type] == 'bot'
+    if params[:sender_type] == 'bot'
       render :nothing => true and return
+    elsif params[:text][0] != '@'
+      pool = Pool.find_by(:group_id => params[:group_id])
+      if pool
+        pool.update(:message_count => pool.message_count + 1)
+      end
     end
     params[:message] = params[:text][1..-1]
   end
