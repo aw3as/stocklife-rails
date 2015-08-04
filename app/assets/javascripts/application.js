@@ -24,11 +24,15 @@ $(document).ready(function() {
 		bot = $('#bot'),
 		cash = $('#cash'),
 		price = $('#price'),
+		plus = $('#plus'),
+		minus = $('#minus'),
 		minimum = $('#minimum'),
 		groupGroup = $('#group-group'),
 		botGroup = $('#bot-group'),
 		cashGroup = $('#cash-group'),
 		priceGroup = $('#price-group'),
+		plusGroup = $('#plus-group'),
+		minusGroup = $('#minus-group'),
 		minimumGroup = $('#minimum-group');
 
 	modal.modal();
@@ -39,6 +43,8 @@ $(document).ready(function() {
 		bot.val('');
 		cash.val('');
 		price.val('');
+		plus.val('');
+		minus.val('');
 		minimum.val('');
 
 		groupGroup.removeClass('has-error');
@@ -49,12 +55,16 @@ $(document).ready(function() {
 		cashGroup.removeClass('has-success');
 		priceGroup.removeClass('has-error');
 		priceGroup.removeClass('has-success');
+		plusGroup.removeClass('has-error');
+		plusGroup.removeClass('has-success');
+		minusGroup.removeClass('has-error');
+		minusGroup.removeClass('has-success');
 		minimumGroup.removeClass('has-error');
 		minimumGroup.removeClass('has-success');
 	});
 
 	$('#register').click(function() {
-		if (groupGroup.hasClass('has-success') && botGroup.hasClass('has-success') && cashGroup.hasClass('has-success') && priceGroup.hasClass('has-success') && minimumGroup.hasClass('has-success')) {
+		if (groupGroup.hasClass('has-success') && botGroup.hasClass('has-success') && cashGroup.hasClass('has-success') && priceGroup.hasClass('has-success') && plusGroup.hasClass('has-success') && minusGroup.hasClass('has-success') && minimumGroup.hasClass('has-success')) {
 			$.ajax('register', {
 				method: 'POST',
 				data: {
@@ -62,6 +72,8 @@ $(document).ready(function() {
 					bot_id: bot.val(),
 					start_cash: cash.val(),
 					start_price: price.val(),
+					daily_plus: plus.val(),
+					daily_minus: minus.val(),
 					minimum_person: minimum.val(),
 				},
 				success: function(response) {
@@ -114,6 +126,28 @@ $(document).ready(function() {
 			priceGroup.removeClass('has-success');
 		}
 	});
+
+	plus.blur(function() {
+		if (/^\d+$/.test(plus.val())) {
+			plusGroup.addClass('has-success');
+			plusGroup.removeClass('has-error');
+		} else {
+			plusGroup.addClass('has-error');
+			plusGroup.removeClass('has-success');
+		}
+	});
+
+
+	minus.blur(function() {
+		if (/^\d+$/.test(minus.val())) {
+			minusGroup.addClass('has-success');
+			minusGroup.removeClass('has-error');
+		} else {
+			minusGroup.addClass('has-error');
+			minusGroup.removeClass('has-success');
+		}
+	});
+
 
 	minimum.blur(function() {
 		if (/^\d+$/.test(minimum.val())) {

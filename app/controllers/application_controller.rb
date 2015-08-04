@@ -83,7 +83,7 @@ class ApplicationController < ActionController::Base
   end
 
   def register
-    pool = Pool.create(:group_id => params[:group_id], :bot_id => params[:bot_id], :start_cash => params[:start_cash], :minimum_person => params[:minimum_person], :start_price => params[:start_price])
+    pool = Pool.create(:group_id => params[:group_id], :bot_id => params[:bot_id], :start_cash => params[:start_cash], :minimum_person => params[:minimum_person], :start_price => params[:start_price], :daily_plus => params[:daily_plus], :daily_minus => params[:daily_minus])
     Bot.message(pool, "$tocklife has been initialized for this pool! Type @help for commands, and @register to begin playing!")
     render :json => {:success => true}
   end

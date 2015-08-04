@@ -8,41 +8,49 @@ class Participant < ActiveRecord::Base
   has_many :sent_transactions, :class_name => Transaction, :foreign_key => :sender_id, :dependent => :destroy
   has_many :received_transactions, :class_name => Transaction, :foreign_key => :receiver_id, :dependent => :destroy
 
-  def transact(participant, amount)
+  def transact(participant, amount, admin = false)
     recent_transactions = sent_transactions.where(:created_at => Time.now.hour.hour.ago..Time.now)
     if amount > 0
       pluses = recent_transactions.map(&:amount).select do |value|
         value > 0
       end.sum
-      if pluses == 10
-        Bot.message(participant.pool, "You have reached your daily limit of 10 pluses!")
-      elsif pluses + amount > 10
-        amount = 10 - pluses
+      if admin
         sent_transactions.create(:receiver_id => participant.id, :amount => amount)
-        Bot.message(participant.pool, "After adding #{Money.new(amount * 100).format[0..-4]} you've reached your daily limit of 10 pluses!")
       else
-        sent_transactions.create(:receiver_id => participant.id, :amount => amount)
+        if pluses >= pool.daily_plus
+          Bot.message(participant.pool, "You have reached your daily limit of #{pool.daily_plus} pluses!")
+        elsif pluses + amount > pool.daily_plus
+          amount = pool.daily_plus - pluses
+          sent_transactions.create(:receiver_id => participant.id, :amount => amount)
+          Bot.message(participant.pool, "After adding #{Money.new(amount * 100).format[0..-4]} you've reached your daily limit of #{pool.daily_plus} pluses!")
+        else
+          sent_transactions.create(:receiver_id => participant.id, :amount => amount)
+        end
       end
     elsif amount < 0
       minuses = recent_transactions.map(&:amount).select do |value|
         value < 0
       end.sum.abs
-      if minuses == 5 or participant.price == 0
-        if minuses == 5
-          Bot.message(participant.pool, "You have reached your daily limit of 5 minuses!")
-        else
-          Bot.message(participant.pool, "#{participant.user.name}'s share price is already at $0!")
-        end
-      elsif minuses + amount.abs > 5 or participant.price - amount.abs < 0
-        new_amount = [5 - minuses, participant.price].min
-        sent_transactions.create(:receiver_id => participant.id, :amount => (new_amount * -1))
-        if new_amount == 5 - minuses
-          Bot.message(participant.pool, "After subtracting #{Money.new(new_amount * 100).format[0..-4]} you've reached your daily limit of 5 minuses!")
-        else
-          Bot.message(participant.pool, "After subtracting #{Money.new(new_amount * 100).format[0..-4]} #{participant.user.name}'s share price is at #{Money.new(participant.reload.price * 100).format[0..-4]}!")
-        end
-      else
+      if admin
         sent_transactions.create(:receiver_id => participant.id, :amount => amount)
+      else
+        if minuses >= pool.daily_minus or participant.price == 0
+          if minuses >= pool.daily_minus
+            Bot.message(participant.pool, "You have reached your daily limit of #{pool.daily_minus} minuses!")
+          else
+            Bot.message(participant.pool, "#{participant.user.name}'s share price is already at $0!")
+          end
+        elsif minuses + amount.abs > pool.daily_minus or participant.price - amount.abs < 0
+          new_amount = [pool.daily_minus - minuses, participant.price].min
+          sent_transactions.create(:receiver_id => participant.id, :amount => (new_amount * -1))
+          if new_amount == pool.daily_minus - minuses
+            Bot.message(participant.pool, "After subtracting #{Money.new(new_amount * 100).format[0..-4]} you've reached your daily limit of #{pool.daily_minus} minuses!")
+          else
+            Bot.message(participant.pool, "After subtracting #{Money.new(new_amount * 100).format[0..-4]} #{participant.user.name}'s share price is at #{Money.new(participant.reload.price * 100).format[0..-4]}!")
+          end
+        else
+          sent_transactions.create(:receiver_id => participant.id, :amount => amount)
+        end
       end
     end
   end

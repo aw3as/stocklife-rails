@@ -5,7 +5,7 @@ class Bot
   end
 
   def self.help(pool)
-    Bot.message(pool, 'Welcome to $tocklife! @ prepends all commands, like @total, @register, @help, @leaderboard')
+    Bot.message(pool, 'Welcome to $tocklife! @ prepends all commands, like @total, @register, @help, @leaderboard.')
   end
 
   def self.command(pool)

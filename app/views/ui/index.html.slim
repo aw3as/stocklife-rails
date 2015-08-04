@@ -31,6 +31,18 @@
               span.input-group-addon $
               input#price.form-control placeholder="ex. 100"
             span.help-block The starting share price per person in dollars here - no commas, periods, or dollar signs please!
+          #plus-group.form-group
+            label.control-label Daily Plus Limit
+            .input-group
+              input#plus.form-control placeholder="ex. 10"
+              span.input-group-addon +
+            span.help-block The max amount of pluses someone can give out per day - reset at midnight
+          #minus-group.form-group
+            label.control-label Daily Minus Limit
+            .input-group
+              input#minus.form-control placeholder="ex. 5"
+              span.input-group-addon -
+            span.help-block The max amount of minuses someone can give out per day - reset at midnight
           #minimum-group.form-group
             label.control-label Minimum Pool Size
             .input-group
