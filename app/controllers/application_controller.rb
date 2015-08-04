@@ -66,6 +66,23 @@ class ApplicationController < ActionController::Base
         Bot.message(pool, message)
       when 'admin'
         Bot.message(pool, "#{pool.admin.user.name} is the admin!")
+      when 'start'
+        user = User.find_by(:user_id => params[:user_id])
+        if user
+          participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
+          if participant
+            if participant == pool.admin
+              pool.start
+            else
+              Bot.message(pool, "You're not the admin - you can't start pools!")
+            end
+          else
+            Bot.message(pool, 'You have not been registered in this pool!')
+          end
+        else
+          Bot.message(pool, 'You have not been registered for $tocklife!')
+        end
+      end
       when 'reset'
         user = User.find_by(:user_id => params[:user_id])
         if pool.admin.user == user
