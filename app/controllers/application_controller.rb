@@ -58,12 +58,7 @@ class ApplicationController < ActionController::Base
       when 'prices'
         Bot.message(pool, pool.prices)
       when 'leaderboard'
-        participants = pool.participants.sort_by(&:price).reverse
-        message = ''
-        participants.each_with_index do |participant, index|
-          message += "#{index + 1}. #{participant.user.name}: $#{participant.price}\n"
-        end
-        Bot.message(pool, message)
+        Bot.message(pool, pool.leaderboard)
       when 'admin'
         Bot.message(pool, "#{pool.admin.user.name} is the admin!")
       when 'start'
