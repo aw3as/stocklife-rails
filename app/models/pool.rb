@@ -28,6 +28,12 @@ class Pool < ActiveRecord::Base
     end
   end
 
+  def restart
+    participants.flat_map(&:stocks).each(&:destroy)
+    participants.map(&:cash).each(&:destroy)
+    start
+  end
+
   def prices
     message = ""
     participants.sort_by(&:price).reverse.each_with_index do |participant, index|

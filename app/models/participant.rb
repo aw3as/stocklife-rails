@@ -79,7 +79,12 @@ class Participant < ActiveRecord::Base
     stock = stocks.find_by(:participant => participant)
     total = participant.price(time) * amount
     if cash.amount >= total
+      puts "decrementing cash by #{total}"
+      puts "cash going from #{cash.amount} to #{cash.amount - total}"
       cash.update(:amount => cash.amount - total)
+
+      puts "incrementing stock by #{amount}"
+      puts "stock going from #{stock.amount} to #{stock.amount + amount}"
       stock.update(:amount => stock.amount + amount)
     else
       puts 'failed to buy due to insufficient funds!'
@@ -89,7 +94,12 @@ class Participant < ActiveRecord::Base
   def sell(participant, amount, time = Time.now)
     stock = stocks.find_by(:participant => participant)
     if amount <= stock.amount
+      puts "incrementing cash by #{total}"
+      puts "cash going from #{cash.amount} to #{cash.amount + participant.price(time) * amount}"
       cash.update(:amount => cash.amount + participant.price(time) * amount)
+
+      puts "decrementing stock by #{amount}"
+      puts "stock going from #{stock.amount} to #{stock.amount - amount}"
       stock.update(:amount => stock.amount - amount)
     else
       puts 'failed to sell due to insufficient stock!!'
@@ -102,9 +112,14 @@ class Participant < ActiveRecord::Base
     amount = ((percentage / 100.0) * portfolio_value(time)) / participant.price(time)
     if percentage < current_percentage
       puts "selling from #{current_percentage.round(2)}% to #{percentage}%"
+      puts "selling from #{stock.amount} shares - #{current_percentage.round(2)}% to #{amount} shares - #{percentage.round(2)}%"
+      puts "selling #{stock.amount - amount} shares"
       sell(participant, stock.amount - amount, time)
     elsif percentage > current_percentage
-      puts "buying from #{current_percentage.round(2)}% to #{percentage}%"
+      puts "buying to #{current_percentage.round(2)}% from #{percentage}%"
+      puts "buying to #{stock.amount} shares - #{current_percentage.round(2)}% from #{amount} shares - #{percentage.round(2)}%"
+      puts "buying #{stock.amount - amount} shares"
+      puts "buying to #{current_percentage.round(2)}% from #{percentage}%"
       buy(participant, amount - stock.amount, time)
     end
   end
