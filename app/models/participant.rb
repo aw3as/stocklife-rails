@@ -113,14 +113,14 @@ class Participant < ActiveRecord::Base
     if percentage < current_percentage
       puts "selling from #{current_percentage.round(2)}% to #{percentage}%"
       puts "selling from #{stock.amount} shares - #{current_percentage.round(2)}% to #{amount} shares - #{percentage.round(2)}%"
-      puts "selling #{stock.amount - amount} shares"
-      sell(participant, stock.amount - amount, time)
+      puts "selling #{(stock.amount - amount).floor} shares"
+      sell(participant, (stock.amount - amount).floor, time)
     elsif percentage > current_percentage
-      puts "buying to #{current_percentage.round(2)}% from #{percentage}%"
-      puts "buying to #{stock.amount} shares - #{current_percentage.round(2)}% from #{amount} shares - #{percentage.round(2)}%"
-      puts "buying #{stock.amount - amount} shares"
-      puts "buying to #{current_percentage.round(2)}% from #{percentage}%"
-      buy(participant, amount - stock.amount, time)
+      puts "buying from #{current_percentage.round(2)}% to #{percentage}%"
+      puts "buying from #{stock.amount} shares - #{current_percentage.round(2)}% to #{amount} shares - #{percentage.round(2)}%"
+      puts "buying #{(amount - stock.amount).floor} shares"
+      puts "buying from #{current_percentage.round(2)}% to #{percentage}%"
+      buy(participant, (amount - stock.amount).floor, time)
     end
   end
 
