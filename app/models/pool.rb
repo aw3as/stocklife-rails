@@ -21,6 +21,7 @@ class Pool < ActiveRecord::Base
       end
       participants.each do |participant|
         Stock.create(:owner_id => participant.id, :amount => start_cash)
+        Stock.create(:owner_id => participant.id, :participant_id => participant.id)
       end
       update(:started => true)
       Bot.message(self, "The $tocklife pool has been started! Everyone starts with #{Money.new(start_cash * 100).format}")
