@@ -94,7 +94,7 @@ class Participant < ActiveRecord::Base
   def sell(participant, amount, time = Time.now)
     stock = stocks.find_by(:participant => participant)
     if amount <= stock.amount
-      puts "incrementing cash by #{total}"
+      puts "incrementing cash by #{participant.price(time) * amount}"
       puts "cash going from #{cash.amount} to #{cash.amount + participant.price(time) * amount}"
       cash.update(:amount => cash.amount + participant.price(time) * amount)
 

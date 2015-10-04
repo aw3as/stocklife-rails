@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   post 'register' => 'application#register'
 
-  post 'ping' => 'application#ping'
+  get 'ping' => 'application#ping'
 
   root 'application#pool'
   # The priority is based upon order of creation: first created -> highest priority.
