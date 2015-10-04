@@ -22,18 +22,15 @@ $(document).ready(function() {
 	var modal = $('#modal'),
 		group = $('#group'),
 		bot = $('#bot'),
-		cash = $('#cash'),
-		price = $('#price'),
+		length = $('#length'),
+		unit = $('#unit'),
 		plus = $('#plus'),
 		minus = $('#minus'),
-		minimum = $('#minimum'),
 		groupGroup = $('#group-group'),
+		lengthGroup = $('#length-group'),
 		botGroup = $('#bot-group'),
-		cashGroup = $('#cash-group'),
-		priceGroup = $('#price-group'),
 		plusGroup = $('#plus-group'),
-		minusGroup = $('#minus-group'),
-		minimumGroup = $('#minimum-group');
+		minusGroup = $('#minus-group');
 
 	modal.modal();
 
@@ -41,40 +38,33 @@ $(document).ready(function() {
 
 		group.val('');
 		bot.val('');
-		cash.val('');
-		price.val('');
 		plus.val('');
 		minus.val('');
-		minimum.val('');
+		length.val('');
+		$('#day').click();
 
 		groupGroup.removeClass('has-error');
 		groupGroup.removeClass('has-success');
 		botGroup.removeClass('has-error');
 		botGroup.removeClass('has-success');
-		cashGroup.removeClass('has-error');
-		cashGroup.removeClass('has-success');
-		priceGroup.removeClass('has-error');
-		priceGroup.removeClass('has-success');
+		lengthGroup.removeClass('has-error');
+		lengthGroup.removeClass('has-success');
 		plusGroup.removeClass('has-error');
 		plusGroup.removeClass('has-success');
 		minusGroup.removeClass('has-error');
 		minusGroup.removeClass('has-success');
-		minimumGroup.removeClass('has-error');
-		minimumGroup.removeClass('has-success');
 	});
 
 	$('#register').click(function() {
-		if (groupGroup.hasClass('has-success') && botGroup.hasClass('has-success') && cashGroup.hasClass('has-success') && priceGroup.hasClass('has-success') && plusGroup.hasClass('has-success') && minusGroup.hasClass('has-success') && minimumGroup.hasClass('has-success')) {
+		if (groupGroup.hasClass('has-success') && botGroup.hasClass('has-success') && lengthGroup.hasClass('has-success') && plusGroup.hasClass('has-success') && minusGroup.hasClass('has-success')) {
 			$.ajax('register', {
 				method: 'POST',
 				data: {
 					group_id: group.val(),
 					bot_id: bot.val(),
-					start_cash: cash.val(),
-					start_price: price.val(),
+					length: parseInt(length.val()) * ($('#unit').text().trim() == 'Days' ? 1 : 7),
 					daily_plus: plus.val(),
-					daily_minus: minus.val(),
-					minimum_person: minimum.val(),
+					daily_minus: minus.val()
 				},
 				success: function(response) {
 					alert('Thanks for registering for $tocklife!');
@@ -85,6 +75,11 @@ $(document).ready(function() {
 				}
 			});
 		}
+	});
+
+	$('li').click(function() {
+		$('#unit').html($(this).text().trim() + ' <span class="caret"></span>');
+		length.blur();
 	});
 
 	group.blur(function() {
@@ -107,23 +102,14 @@ $(document).ready(function() {
 		}
 	});
 
-	cash.blur(function() {
-		if (/^\d+$/.test(cash.val())) {
-			cashGroup.addClass('has-success');
-			cashGroup.removeClass('has-error');
+	length.blur(function() {
+		var days = parseInt(length.val()) * ($('#unit').text().trim() == 'Days' ? 1 : 7);
+		if (/^\d+$/.test(length.val()) && days > 2 && days < 43){
+			lengthGroup.addClass('has-success');
+			lengthGroup.removeClass('has-error');
 		} else {
-			cashGroup.addClass('has-error');
-			cashGroup.removeClass('has-success');
-		}
-	});
-
-	price.blur(function() {
-		if (/^\d+$/.test(price.val())) {
-			priceGroup.addClass('has-success');
-			priceGroup.removeClass('has-error');
-		} else {
-			priceGroup.addClass('has-error');
-			priceGroup.removeClass('has-success');
+			lengthGroup.addClass('has-error');
+			lengthGroup.removeClass('has-success');
 		}
 	});
 
@@ -137,7 +123,6 @@ $(document).ready(function() {
 		}
 	});
 
-
 	minus.blur(function() {
 		if (/^\d+$/.test(minus.val())) {
 			minusGroup.addClass('has-success');
@@ -145,17 +130,6 @@ $(document).ready(function() {
 		} else {
 			minusGroup.addClass('has-error');
 			minusGroup.removeClass('has-success');
-		}
-	});
-
-
-	minimum.blur(function() {
-		if (/^\d+$/.test(minimum.val())) {
-			minimumGroup.addClass('has-success');
-			minimumGroup.removeClass('has-error');
-		} else {
-			minimumGroup.addClass('has-error');
-			minimumGroup.removeClass('has-success');
 		}
 	});
 });

@@ -24,13 +24,20 @@ class Pool < ActiveRecord::Base
         Stock.create(:owner_id => participant.id, :participant_id => participant.id)
       end
       update(:started => true)
+      update(:started_at => Time.now)
       Bot.message(self, "The $tocklife pool has been started! Everyone starts with #{Money.new(start_cash * 100).format}")
     end
+  end
+
+  def stop
+    update(:started => false)
+    update(:started_at => nil)
   end
 
   def restart
     participants.flat_map(&:stocks).each(&:destroy)
     participants.map(&:cash).each(&:destroy)
+    wipe
     start
   end
 
@@ -48,6 +55,24 @@ class Pool < ActiveRecord::Base
       message += "#{index + 1}. #{participant.user.name}: #{Money.new(participant.portfolio_value * 100).format[0..-4]}\n"
     end
     message
+  end
+
+  def days_left
+    ((started_at + length.days).to_date - Time.now.to_date).to_i
+  end
+
+  def notify
+    if pool.started
+      Bot.message(self, pool.leaderboard)
+      if days_left == 0
+        best_price = participants.sort_by(&:price).reverse.first
+        best_portfolio = participants.sort_by(&:portfolio_value).reverse.first
+        Bot.message("The game has ended! #{best_price.user.name} has the best price at $#{best_price.user.price}, and #{best_portfolio.user.name} has the best portfolio at $#{best_portfolio.portfolio_value}! Congratulations! To restart - have #{admin.user.name} type @start to begin again!")
+        stop
+      else
+        Bot.message(self, "There #{days_left == 1 ? 'is' : 'are'} #{days_left} #{'days'.pluralize(days_left)} left in the game! This is checked everyday at 5PM EST.")
+      end
+    end
   end
 
 end

@@ -19,18 +19,20 @@
               input#bot.form-control placeholder="26 characters long, ex. 993dda9599bb57f3269fbf756d"
               span.input-group-addon ID
             span.help-block The Bot ID helps $tocklife know where to post messages to!
-          #cash-group.form-group
-            label.control-label Starting Cash
+          #length-group.form-group
+            label.control-label Game Length
             .input-group
-              span.input-group-addon $
-              input#cash.form-control placeholder="ex. 100000"
-            span.help-block The starting cash in dolllars here - no commas, periods, or dollar signs please!
-          #price-group.form-group
-            label.control-label Starting Share Price
-            .input-group
-              span.input-group-addon $
-              input#price.form-control placeholder="ex. 100"
-            span.help-block The starting share price per person in dollars here - no commas, periods, or dollar signs please!
+              input#length.form-control placeholder="3 days minimum, 6 weeks maximum"
+              .input-group-btn
+                button#unit.btn.btn-default.dropdown-toggle aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" type="button" 
+                  | Days 
+                  span.caret
+                ul.dropdown-menu.dropdown-menu-right
+                  li#day
+                    a href="#" Days
+                  li#week
+                    a href="#" Weeks
+            span.help-block $tocklife games typically run from 3 - 5 weeks, but are great for weekends too!
           #plus-group.form-group
             label.control-label Daily Plus Limit
             .input-group
@@ -43,12 +45,6 @@
               input#minus.form-control placeholder="ex. 5"
               span.input-group-addon -
             span.help-block The max amount of minuses someone can give out per day - reset at midnight
-          #minimum-group.form-group
-            label.control-label Minimum Pool Size
-            .input-group
-              input#minimum.form-control placeholder="ex. 7"
-              span.input-group-addon people
-            span.help-block The minimum amount of people needed in a pool before it can start
           p The first person to register (post @register in the chat) will be the admin - most likely to be you!
       .modal-footer
         button#reset.btn.btn-danger.pull-left type="button" Reset

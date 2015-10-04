@@ -57,6 +57,8 @@ class ApplicationController < ActionController::Base
         Bot.command(pool)
       when 'prices'
         Bot.message(pool, pool.prices)
+      when 'price'
+        Bot.message(pool, pool.prices)
       when 'leaderboard'
         Bot.message(pool, pool.leaderboard)
       when 'admin'
@@ -67,7 +69,11 @@ class ApplicationController < ActionController::Base
           participant = Participant.find_by(:user_id => user.id, :pool_id => pool.id)
           if participant
             if participant == pool.admin
-              pool.start
+              if pool.started
+                Bot.message(pool, "$tocklife has already been started for this pool!")
+              else
+                pool.start
+              end
             else
               Bot.message(pool, "You're not the admin - you can't start pools!")
             end
@@ -87,6 +93,8 @@ class ApplicationController < ActionController::Base
         end
       when 'status'
         Bot.status(pool)
+      when 'trade'
+        Bot.trade(pool)
       end
     end
     
@@ -94,13 +102,19 @@ class ApplicationController < ActionController::Base
   end
 
   def register
-    pool = Pool.create(:group_id => params[:group_id], :bot_id => params[:bot_id], :start_cash => params[:start_cash], :minimum_person => params[:minimum_person], :start_price => params[:start_price], :daily_plus => params[:daily_plus], :daily_minus => params[:daily_minus])
+    pool = Pool.create(:group_id => params[:group_id], :bot_id => params[:bot_id], :length => params[:length], :daily_plus => params[:daily_plus], :daily_minus => params[:daily_minus])
     Bot.message(pool, "$tocklife has been initialized for this pool! Type @help for commands, and @register to begin playing!")
     render :json => {:success => true}
   end
 
   def pool
     render 'ui/index'
+  end
+
+  def ping
+    if params[:token] and params[:token] == '4db2e2382895e4b46d4008c2298f08280da89219b459043a33bc2e7cab537231ad50ffeba8e12c0a7d73de02b91718ad7d5efdbbd4bada60a75fa17fd3ed77b7'
+      Pool.each(&:notify)
+    end
   end
 
   private

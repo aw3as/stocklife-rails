@@ -66,12 +66,12 @@ class Participant < ActiveRecord::Base
   end
 
   def portfolio(time = Time.now)
-    header = %w(Name Shares Price Total Percentage).join("\t\t")
+    header = %w(Name Price Percentage).join("\t\t")
     stock_lines = stocks.reload.map do |stock|
-      [stock.participant.user.name[0..6], stock.amount, Money.new(stock.participant.price(time) * 100).format[0..-4], Money.new(stock.value(time) * 100).format[0..-4], (stock.value(time).to_f / portfolio_value(time) * 100).round(1)].join("\t\t")
+      [stock.participant.user.name[0..6], Money.new(stock.participant.price(time) * 100).format[0..-4], (stock.value(time).to_f / portfolio_value(time) * 100).round(1)].join("\t\t")
     end
-    cash_line = ["Cash", "N/A", "N/A", Money.new(cash.amount * 100).format[0..-4], (cash.amount.to_f / portfolio_value(time) * 100).round(1)].join("\t\t")
-    total_line = ["Total", "N/A", "N/A", Money.new(portfolio_value(time) * 100).format[0..-4], "100%"].join("\t\t")
+    cash_line = ["Cash", "N/A", (cash.amount.to_f / portfolio_value(time) * 100).round(1)].join("\t\t")
+    total_line = ["Total", "N/A", "100%"].join("\t\t")
     [header, *stock_lines, cash_line, total_line].join("\n")
   end
 

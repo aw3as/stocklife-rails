@@ -28,9 +28,12 @@ ActiveRecord::Schema.define(version: 20150721192338) do
     t.integer  "start_price",    limit: 4,   default: 100,    null: false
     t.integer  "start_cash",     limit: 4,   default: 100000, null: false
     t.boolean  "started",        limit: 1,   default: false,  null: false
+    t.datetime "started_at"
     t.integer  "minimum_person", limit: 4,   default: 7,      null: false
     t.integer  "daily_plus",     limit: 4,   default: 10,     null: false
     t.integer  "daily_minus",    limit: 4,   default: 5,      null: false
+    t.integer  "message_count",  limit: 4,   default: 0,      null: false
+    t.integer  "length",         limit: 4,   default: 3,      null: false
   end
 
   create_table "stocks", force: :cascade do |t|
