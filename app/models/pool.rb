@@ -35,8 +35,8 @@ class Pool < ActiveRecord::Base
   end
 
   def restart
-    participants.flat_map(&:stocks).each(&:destroy)
-    participants.map(&:cash).each(&:destroy)
+    participants.flat_map(&:stocks).compact.each(&:destroy)
+    participants.map(&:cash).compact.each(&:destroy)
     wipe
     start
   end

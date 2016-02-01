@@ -77,7 +77,11 @@ class ApplicationController < ActionController::Base
       when 'price'
         Bot.message(pool, pool.prices)
       when 'leaderboard'
-        Bot.message(pool, pool.leaderboard)
+	if pool.started
+          Bot.message(pool, pool.leaderboard)
+        else
+          Bot.message(pool, "The game hasn't been started yet! Have #{pool.admin.user.name} @start the game!")
+        end
       when 'admin'
         Bot.message(pool, "#{pool.admin.user.name} is the admin!")
       # Starting the pool wipes the stock allocations as well as transactions
